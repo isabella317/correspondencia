@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="correspondenciaPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>DAO.Tablas.Externo</class>
+    <class>DAO.Tablas.Remitenteinterno</class>
+    <class>DAO.Tablas.DependenciaInterna</class>
+    <class>DAO.Tablas.Dependenciaexterna</class>
+    <class>DAO.Tablas.Remitenteexterno</class>
+    <class>DAO.Tablas.Interno</class>
+    <class>DAO.Tablas.Rolusuario</class>
+    <class>DAO.Tablas.Usuario_1</class>
+    <class>DAO.Tablas.Rol</class>
+    <class>DAO.Tablas.Funcion</class>
+    <class>DAO.Tablas.Funcionario</class>
+    <class>DAO.Tablas.Dependencia</class>
+    <class>DAO.Tablas.Funcionrol</class>
+    <class>DAO.Tablas.Usuario</class>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/correspondencia"/>
+      <property name="javax.persistence.jdbc.user" value="admin"/>
+      <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+      <property name="javax.persistence.jdbc.password" value="admin"/>
+      <!-- EclipseLink should create the database schema automatically -->
+    </properties>
+  </persistence-unit>
+</persistence>
