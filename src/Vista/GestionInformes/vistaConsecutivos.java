@@ -1,7 +1,6 @@
 package Vista.GestionInformes;
 
-import static Controlador.ControladorInicioSesion.UsValido;
-import Modelo.Entidades.Usuario;
+import static Controlador.controladorInicioSesion.UsValido;
 import Vista.*;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -11,7 +10,6 @@ import java.awt.Toolkit;
 public class vistaConsecutivos extends javax.swing.JFrame {
 
     
-    Usuario u = new Usuario();
     vistaPanelPrincipal  vistapanelprincipalinformes = new vistaPanelPrincipal(UsValido);
     vistaPanelPrincipal va;
    

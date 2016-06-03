@@ -1,11 +1,9 @@
 package Controlador.GestionInformes;
 
 //import static Controlador.ControladorInicioSesion.conexion;
-import static Controlador.ControladorInicioSesion.UsValido;
-import static Controlador.GestionCorrespondencia.controladorCancelarCorrespondencia.DeStringADate;
-import static Controlador.GestionCorrespondencia.controladorRegistrarCorrespondencia.anio;
-import static Controlador.GestionCorrespondencia.controladorRegistrarCorrespondencia.dia;
-import static Controlador.GestionCorrespondencia.controladorRegistrarCorrespondencia.mes;
+import static Controlador.controladorInicioSesion.UsValido;
+import static Controlador.GestionCorrespondencia.controladorAnularCorrespondencia.DeStringADate;
+
 import Controlador.controladorPanelPrincipal;
 import Vista.GestionInformes.vistaConsecutivos;
 import Vista.vistaPanelPrincipal;
@@ -71,19 +69,9 @@ public class controladorConsecutivo implements ActionListener, MouseListener {
             Date Date1 = DeStringADate(vistaconsecutivos.fechainicial.getText());
             Date Date2 = DeStringADate(vistaconsecutivos.fechafinal.getText());
             int numero = Date1.compareTo(Date2);
-            String fechaact = dia + "/" + mes + "/" + anio;
-            Date Date3 = DeStringADate(fechaact);
-            int numero2 = Date1.compareTo(Date3);
-            int numero3 = Date2.compareTo(Date3);
+          
 
-            if (numero > 0 || numero2 > 0 || numero3 > 0) {
-                JOptionPane.showMessageDialog(null, "Intervalo invalido.");
-            } else {
-
-                
-//                    conexion.consultaConsecutivos(vistaconsecutivos.fechainicial.getText(), vistaconsecutivos.fechafinal.getText(), vistaconsecutivos,vistaconsecutivos.filtroconsecutivo.getSelectedItem().toString() );
-                
-            }
+          
 
         }
 

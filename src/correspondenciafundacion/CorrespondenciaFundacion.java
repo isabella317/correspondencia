@@ -1,11 +1,11 @@
 package correspondenciafundacion;
 
-import Controlador.ControladorInicioSesion;
-import static Controlador.ControladorInicioSesion.Conconexion;
-import static Controlador.ControladorInicioSesion.DuDaousuario;
+import Controlador.controladorInicioSesion;
+import static Controlador.controladorInicioSesion.Conconexion;
+import static Controlador.controladorInicioSesion.DuDaousuario;
 import DAO.Funciones.DaoUsuario;
-import Modelo.Entidades.Conexion;
-import Modelo.Entidades.PanelPermiso;
+import Modelo.Conexion;
+import Modelo.PanelPermiso;
 import Vista.Autenticar.vistaLogin;
 import Vista.Autenticar.vistaLogin;
 import Vista.vistaPanelPrincipal;
@@ -23,11 +23,11 @@ public class CorrespondenciaFundacion extends Application {
     public void GenerarPermisos() {
 
         vistaPanelPrincipal jfrVistaPanelPrincipal = new vistaPanelPrincipal();
-        panel = new PanelPermiso("INGRESO PARA MODIFICAR,CONSULTAR Y CREAR USUARIOS", 1, jfrVistaPanelPrincipal.vistaUsuario, jfrVistaPanelPrincipal.jlbUsuarios);
+        panel = new PanelPermiso("INGRESO PARA MODIFICAR,CONSULTAR Y CREAR USUARIOS", 1, jfrVistaPanelPrincipal.jlbUsuario, jfrVistaPanelPrincipal.jlbUsuarios);
 
-        panel = new PanelPermiso("INGRESO PARA CREAR REGISTRAR Y CONSULTAR FUNCIONARIOS", 2, jfrVistaPanelPrincipal.vistaFuncionario, jfrVistaPanelPrincipal.jlbFuncionarios);
+        panel = new PanelPermiso("INGRESO PARA CREAR REGISTRAR Y CONSULTAR FUNCIONARIOS", 2, jfrVistaPanelPrincipal.jlbFuncionario, jfrVistaPanelPrincipal.jlbFuncionarios);
 
-        panel = new PanelPermiso("INGRESO PARA MODIFICAR Y CONSULTAR INFORMACION PROPIA", 3, jfrVistaPanelPrincipal.vistaConfiguracion, jfrVistaPanelPrincipal.jlbConfUsuario);
+        panel = new PanelPermiso("INGRESO PARA MODIFICAR Y CONSULTAR INFORMACION PROPIA", 3, jfrVistaPanelPrincipal.jlbConfiguracion, jfrVistaPanelPrincipal.jlbConfUsuario);
 
     }
 
@@ -40,7 +40,7 @@ public class CorrespondenciaFundacion extends Application {
         DAO.Tablas.Usuario UsValido = DuDaousuario.findUsuario("111");
 
         vistaLogin r = new vistaLogin();
-        ControladorInicioSesion controladorL = new ControladorInicioSesion(r);
+        controladorInicioSesion controladorL = new controladorInicioSesion(r);
         r.setVisible(true);
         r.setLocationRelativeTo(null);
 

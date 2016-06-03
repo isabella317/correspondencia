@@ -1,7 +1,6 @@
 package Controlador.GestionUsuario;
 
-
-import Modelo.Entidades.*;
+import Modelo.Seguridad;
 import Vista.vistaPanelPrincipal;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,46 +8,73 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import static Controlador.ControladorInicioSesion.AdAdvertencia;
-import static Controlador.ControladorInicioSesion.Conconexion;
-import static Controlador.ControladorInicioSesion.DuDaodependencia;
-import static Controlador.ControladorInicioSesion.DuDaofuncionario;
-import static Controlador.ControladorInicioSesion.UsValido;
+import static Controlador.controladorInicioSesion.AdAdvertencia;
+import static Controlador.controladorInicioSesion.Conconexion;
+import static Controlador.controladorInicioSesion.DuDaodependencia;
+import static Controlador.controladorInicioSesion.DuDaofuncionario;
 import static Controlador.GestionUsuario.controladorConfUsuario.VAlidaEmail;
 import DAO.Funciones.DaoDependencia;
 import DAO.Funciones.DaoFuncionario;
 import DAO.Tablas.Dependencia;
 import DAO.Tablas.Funcionario;
+import Modelo.ButtonEditor;
+import Modelo.ButtonRenderer;
 import java.util.List;
+import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import vistaGestionUsuario.panelFuncionario;
 
-/*CLASE ENCARGADA DE CONTROL DE GESTION FUNCIONARIOS*/
+/*Controlador de funcionarios : Encargado de realizar acciones dependiendo del medio de donde provengan ::Boton,Jlabel,etc...  */
 public final class controladorFuncionarios implements MouseListener, ActionListener, KeyListener {
 
-    private panelFuncionario jfrGestionFuncionario = new panelFuncionario ();
+    private panelFuncionario jfrGestionFuncionario = new panelFuncionario();
     vistaPanelPrincipal jfrPanelPrincipal;
     public Seguridad SgSeguridad = new Seguridad();
     DAO.Funciones.DaoFuncionario DuDafuncionario;
     Funcionario funcionario;
     Funcionario FnFuncionario;
+    private int paginacion;
+    int paginaActual = 0;
+    private int registroactual = 0;
+    private int totalPaginas;
 
-    public controladorFuncionarios(panelFuncionario  jfrGestionFuncionario) {
+    public controladorFuncionarios(panelFuncionario jfrGestionFuncionario) {
 
         this.jfrGestionFuncionario = jfrGestionFuncionario;
-        DuDaofuncionario = new DaoFuncionario(Conconexion.getConexion());
-        List<DAO.Tablas.Funcionario> UsuarioUsModificar = DuDaofuncionario.funcionarioXApellidos();
-        llenarLista(UsuarioUsModificar);
+        Paginar();
         jfrGestionFuncionario.jlbRegistrarFU.addMouseListener(this);
         jfrGestionFuncionario.jlbModificarFU.addMouseListener(this);
-        jfrGestionFuncionario.btnActualizar.setEnabled(false);
-        jfrGestionFuncionario.btnActualizar.addActionListener(this);
-        jfrGestionFuncionario.btnLimpiar.addActionListener(this);
         jfrGestionFuncionario.jlbMsjAdvertencia.setVisible(false);
         jfrGestionFuncionario.jlbMsjAdvertencia2.setVisible(false);
         jfrGestionFuncionario.btnConsulta.addActionListener(this);
+        jfrGestionFuncionario.cmbPaginacion.addActionListener(this);
+        jfrGestionFuncionario.jlbSiguiente.addMouseListener(this);
+        jfrGestionFuncionario.jlbAtras.addMouseListener(this);
+        jfrGestionFuncionario.jlbPrimero.addMouseListener(this);
+        jfrGestionFuncionario.jlbUltimo.addMouseListener(this);
+    }
 
+    public void modificar() {
+
+        jfrGestionFuncionario.jlbMsjAdvertencia.setVisible(false);
+        jfrGestionFuncionario.jlbMsjAdvertencia2.setVisible(false);
+        jfrGestionFuncionario.jtxIdentificacion.setEditable(false);
+        jfrGestionFuncionario.jtxNombres.setEditable(false);
+        jfrGestionFuncionario.jtxApellidos.setEditable(false);
+        jfrGestionFuncionario.cmbTipoDoc.enable(false);
+        String id = (String) jfrGestionFuncionario.jtbTablaUsuarios.getValueAt(jfrGestionFuncionario.jtbTablaUsuarios.getSelectedRow(), 0);
+        DuDaofuncionario = new DaoFuncionario(Conconexion.getConexion());
+        FnFuncionario = DuDaofuncionario.findFuncionario(id);
+        jfrGestionFuncionario.jtxNombres.setText(FnFuncionario.getNombre());
+        jfrGestionFuncionario.jtxApellidos.setText(FnFuncionario.getApellido());
+        jfrGestionFuncionario.jtxIdentificacion.setText(FnFuncionario.getIdentificacion());
+        jfrGestionFuncionario.jtxtCorreo.setText(FnFuncionario.getEmail());
+        jfrGestionFuncionario.jtxTelefono.setText(FnFuncionario.getTelefono());
+        jfrGestionFuncionario.jtxCargo.setText(FnFuncionario.getCargo());
+        jfrGestionFuncionario.cmbTipoDoc.setSelectedItem(FnFuncionario.getTipoIdentificacion());
+        jfrGestionFuncionario.cmbDependencia.setSelectedItem(FnFuncionario.getIdDependencia().getNombre());
+        jfrGestionFuncionario.cmbSede.setSelectedItem(FnFuncionario.getSede());
     }
 
     @Override
@@ -59,7 +85,6 @@ public final class controladorFuncionarios implements MouseListener, ActionListe
             jfrGestionFuncionario.jtxIdentificacion.setEditable(true);
             jfrGestionFuncionario.jtxNombres.setEditable(true);
             jfrGestionFuncionario.jtxApellidos.setEditable(true);
-            jfrGestionFuncionario.btnActualizar.setEnabled(false);
             jfrGestionFuncionario.jlbMsjAdvertencia.setVisible(false);
             jfrGestionFuncionario.jlbMsjAdvertencia2.setVisible(false);
 
@@ -84,6 +109,10 @@ public final class controladorFuncionarios implements MouseListener, ActionListe
 
                         DuDaofuncionario = new DaoFuncionario(Conconexion.getConexion());
                         DuDaofuncionario.create(new Funcionario(jfrGestionFuncionario.jtxIdentificacion.getText(), StTipoDocumento, jfrGestionFuncionario.jtxNombres.getText().toUpperCase(), jfrGestionFuncionario.jtxApellidos.getText().toUpperCase(), StCargo, jfrGestionFuncionario.jtxTelefono.getText(), jfrGestionFuncionario.jtxtCorreo.getText(), DpDaoTabla, StSede));
+                        limpiarCampos();
+                        DefaultTableModel model = (DefaultTableModel) jfrGestionFuncionario.jtbTablaUsuarios.getModel();
+                        borrarFilas(jfrGestionFuncionario.jtbTablaUsuarios.getRowCount(), model);
+                        Paginar();
                         jfrGestionFuncionario.jlbMsjAdvertencia.setText(AdAdvertencia.getRegistroFuncionario());
                         jfrGestionFuncionario.jlbMsjAdvertencia.setVisible(true);
 
@@ -100,67 +129,6 @@ public final class controladorFuncionarios implements MouseListener, ActionListe
             }
 
         } else if (e.getSource() == jfrGestionFuncionario.jlbModificarFU) {
-
-            jfrGestionFuncionario.jlbMsjAdvertencia.setVisible(false);
-            jfrGestionFuncionario.jlbMsjAdvertencia2.setVisible(false);
-            if (jfrGestionFuncionario.jtbTablaUsuarios.getSelectedRow() == -1) {
-
-                jfrGestionFuncionario.jlbMsjAdvertencia.setText(AdAdvertencia.getModificar());
-                jfrGestionFuncionario.jlbMsjAdvertencia.setVisible(true);
-
-            } else {
-
-                jfrGestionFuncionario.jtxIdentificacion.setEditable(false);
-                jfrGestionFuncionario.jtxNombres.setEditable(false);
-                jfrGestionFuncionario.jtxApellidos.setEditable(false);
-                jfrGestionFuncionario.cmbTipoDoc.enable(false);
-                jfrGestionFuncionario.btnActualizar.setEnabled(true);
-                String id = (String) jfrGestionFuncionario.jtbTablaUsuarios.getValueAt(jfrGestionFuncionario.jtbTablaUsuarios.getSelectedRow(), 0);
-                DuDaofuncionario = new DaoFuncionario(Conconexion.getConexion());
-                FnFuncionario = DuDaofuncionario.findFuncionario(id);
-                jfrGestionFuncionario.jtxNombres.setText(FnFuncionario.getNombre());
-                jfrGestionFuncionario.jtxApellidos.setText(FnFuncionario.getApellido());
-                jfrGestionFuncionario.jtxIdentificacion.setText(FnFuncionario.getIdentificacion());
-                jfrGestionFuncionario.jtxtCorreo.setText(FnFuncionario.getEmail());
-                jfrGestionFuncionario.jtxTelefono.setText(FnFuncionario.getTelefono());
-                jfrGestionFuncionario.jtxCargo.setText(FnFuncionario.getCargo());
-                jfrGestionFuncionario.cmbTipoDoc.setSelectedItem(FnFuncionario.getTipoIdentificacion());
-                jfrGestionFuncionario.cmbDependencia.setSelectedItem(FnFuncionario.getIdDependencia().getNombre());
-                jfrGestionFuncionario.cmbSede.setSelectedItem(FnFuncionario.getSede());
-
-            }
-        }
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e
-    ) {
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e
-    ) {
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e
-    ) {
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e
-    ) {
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
-        if (e.getSource() == jfrGestionFuncionario.btnLimpiar) {
-
-            limpiarCampos();
-
-        } else if (e.getSource() == jfrGestionFuncionario.btnActualizar) {
-
             jfrGestionFuncionario.jlbMsjAdvertencia.setVisible(false);
             jfrGestionFuncionario.jlbMsjAdvertencia2.setVisible(false);
 
@@ -192,6 +160,10 @@ public final class controladorFuncionarios implements MouseListener, ActionListe
                         funcionario.setCargo(jfrGestionFuncionario.jtxCargo.getText().toUpperCase());
                         DuDaofuncionario = new DaoFuncionario(Conconexion.getConexion());
                         DuDaofuncionario.edit(funcionario);
+                        limpiarCampos();
+                        DefaultTableModel model = (DefaultTableModel) jfrGestionFuncionario.jtbTablaUsuarios.getModel();
+                        borrarFilas(jfrGestionFuncionario.jtbTablaUsuarios.getRowCount(), model);
+                        Paginar();
                         jfrGestionFuncionario.jlbMsjAdvertencia.setText(AdAdvertencia.getModificarUsuario());
                         jfrGestionFuncionario.jlbMsjAdvertencia.setVisible(true);
 
@@ -205,11 +177,98 @@ public final class controladorFuncionarios implements MouseListener, ActionListe
                     jfrGestionFuncionario.jlbMsjAdvertencia.setVisible(true);
                 }
             }
-        } else if (e.getSource() == jfrGestionFuncionario.btnConsulta) {
+        } else if (e.getSource() == jfrGestionFuncionario.jlbSiguiente) {
+
+            if (paginaActual < totalPaginas - 1) {
+                jfrGestionFuncionario.cmbPaginacion.setEnabled(false);
+                DefaultTableModel model = (DefaultTableModel) jfrGestionFuncionario.jtbTablaUsuarios.getModel();
+                borrarFilas(jfrGestionFuncionario.jtbTablaUsuarios.getRowCount(), model);
+                int paginacionActual = Integer.parseInt(jfrGestionFuncionario.cmbPaginacion.getSelectedItem().toString());
+                paginaActual++;
+                registroactual = (paginaActual) * paginacionActual;
+                Paginar();
+
+            }
+        } else if (e.getSource() == jfrGestionFuncionario.jlbAtras) {
+
+            if (paginaActual > 0) {
+
+                if (paginaActual == 1) {
+                    jfrGestionFuncionario.cmbPaginacion.setEnabled(true);
+                    DefaultTableModel model = (DefaultTableModel) jfrGestionFuncionario.jtbTablaUsuarios.getModel();
+                    borrarFilas(jfrGestionFuncionario.jtbTablaUsuarios.getRowCount(), model);
+                    int paginacionActual = Integer.parseInt(jfrGestionFuncionario.cmbPaginacion.getSelectedItem().toString());
+                    paginaActual--;
+                    registroactual = (paginaActual) * paginacionActual;
+                    Paginar();
+                } else {
+
+                    jfrGestionFuncionario.cmbPaginacion.setEnabled(false);
+                    DefaultTableModel model = (DefaultTableModel) jfrGestionFuncionario.jtbTablaUsuarios.getModel();
+                    borrarFilas(jfrGestionFuncionario.jtbTablaUsuarios.getRowCount(), model);
+                    int paginacionActual = Integer.parseInt(jfrGestionFuncionario.cmbPaginacion.getSelectedItem().toString());
+                    paginaActual--;
+                    registroactual = (paginaActual) * paginacionActual;
+                    Paginar();
+                }
+            }
+        } else if (e.getSource() == jfrGestionFuncionario.jlbPrimero) {
+
+            if (totalPaginas != 1) {
+                jfrGestionFuncionario.cmbPaginacion.setEnabled(true);
+                DefaultTableModel model = (DefaultTableModel) jfrGestionFuncionario.jtbTablaUsuarios.getModel();
+                borrarFilas(jfrGestionFuncionario.jtbTablaUsuarios.getRowCount(), model);
+                int paginacionActual = Integer.parseInt(jfrGestionFuncionario.cmbPaginacion.getSelectedItem().toString());
+                paginaActual = 0;
+                registroactual = (paginaActual) * paginacionActual;
+                Paginar();
+            }
+        } else if (e.getSource() == jfrGestionFuncionario.jlbUltimo) {
+
+            if (totalPaginas != 1) {
+                jfrGestionFuncionario.cmbPaginacion.setEnabled(false);
+                DefaultTableModel model = (DefaultTableModel) jfrGestionFuncionario.jtbTablaUsuarios.getModel();
+                borrarFilas(jfrGestionFuncionario.jtbTablaUsuarios.getRowCount(), model);
+                int paginacionActual = Integer.parseInt(jfrGestionFuncionario.cmbPaginacion.getSelectedItem().toString());
+                paginaActual = totalPaginas - 1;
+                registroactual = (paginaActual) * paginacionActual;
+                Paginar();
+            }
+        }
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e
+    ) {
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e
+    ) {
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e
+    ) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e
+    ) {
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e
+    ) {
+
+        if (e.getSource() == jfrGestionFuncionario.btnConsulta) {
+            totalPaginas = 1;
+            paginaActual=0;
+            jfrGestionFuncionario.jlbPaginas.setText("Página " + (paginaActual +1) + " de " + 1);
             jfrGestionFuncionario.jtxIdentificacion.setEditable(true);
             jfrGestionFuncionario.jtxNombres.setEditable(true);
             jfrGestionFuncionario.jtxApellidos.setEditable(true);
-            jfrGestionFuncionario.btnActualizar.setEnabled(false);
             jfrGestionFuncionario.jlbMsjAdvertencia.setVisible(false);
             jfrGestionFuncionario.jlbMsjAdvertencia.setVisible(false);
 
@@ -234,11 +293,33 @@ public final class controladorFuncionarios implements MouseListener, ActionListe
 
                     DefaultTableModel model = (DefaultTableModel) jfrGestionFuncionario.jtbTablaUsuarios.getModel();
                     borrarFilas(jfrGestionFuncionario.jtbTablaUsuarios.getRowCount(), model);
-                    model.addRow(new Object[]{UsuarioFnModificar.getIdentificacion(), UsuarioFnModificar.getNombre(), UsuarioFnModificar.getApellido(), UsuarioFnModificar.getTelefono(), UsuarioFnModificar.getEmail(), UsuarioFnModificar.getSede()});
+                    model.addRow(new Object[]{UsuarioFnModificar.getIdentificacion(), UsuarioFnModificar.getNombre(), UsuarioFnModificar.getApellido(), UsuarioFnModificar.getTelefono(), UsuarioFnModificar.getEmail(), UsuarioFnModificar.getSede(), "Editar", "Eliminar"});
+                    jfrGestionFuncionario.jtbTablaUsuarios.getColumn("").setCellRenderer(new ButtonRenderer());
+                    jfrGestionFuncionario.jtbTablaUsuarios.getColumn("").setCellEditor(new ButtonEditor(new JCheckBox(), this));
+                    jfrGestionFuncionario.jtbTablaUsuarios.getColumn("").setPreferredWidth(-50000);
 
                 }
+
             }
+        } else if (e.getSource() == jfrGestionFuncionario.cmbPaginacion) {
+
+            DefaultTableModel model = (DefaultTableModel) jfrGestionFuncionario.jtbTablaUsuarios.getModel();
+            borrarFilas(jfrGestionFuncionario.jtbTablaUsuarios.getRowCount(), model);
+            Paginar();
+
         }
+
+    }
+
+    public void Paginar() {
+        paginacion = Integer.parseInt(jfrGestionFuncionario.cmbPaginacion.getSelectedItem().toString());
+        DuDaofuncionario = new DaoFuncionario(Conconexion.getConexion());
+        int InTotalPag = DuDaofuncionario.getFuncionarioCount();
+        totalPaginas = ((InTotalPag / paginacion) + 1);
+        jfrGestionFuncionario.jlbPaginas.setText("Página " + (paginaActual + 1) + " de " + ((InTotalPag / paginacion) + 1));
+        List<Funcionario> listaFuncionarios = DuDaofuncionario.getPaginacion(registroactual, paginacion);
+        llenarLista(listaFuncionarios);
+
     }
 
     @Override
@@ -256,9 +337,9 @@ public final class controladorFuncionarios implements MouseListener, ActionListe
     ) {
     }
 
-    public void borrarFilas(int filas, DefaultTableModel model) {
+    public void borrarFilas(int InFilas, DefaultTableModel model) {
 
-        for (int i = 0; i < filas; i++) {
+        for (int i = 0; i < InFilas; i++) {
             model.removeRow(0);
         }
     }
@@ -268,7 +349,10 @@ public final class controladorFuncionarios implements MouseListener, ActionListe
 
         for (int i = 0; i < UsuarioUsModificar.size(); i++) {
 
-            model.addRow(new Object[]{UsuarioUsModificar.get(i).getIdentificacion(), UsuarioUsModificar.get(i).getNombre(), UsuarioUsModificar.get(i).getApellido(), UsuarioUsModificar.get(i).getTelefono(), UsuarioUsModificar.get(i).getEmail(), UsuarioUsModificar.get(i).getSede()});
+            model.addRow(new Object[]{UsuarioUsModificar.get(i).getIdentificacion(), UsuarioUsModificar.get(i).getNombre(), UsuarioUsModificar.get(i).getApellido(), UsuarioUsModificar.get(i).getTelefono(), UsuarioUsModificar.get(i).getEmail(), UsuarioUsModificar.get(i).getSede(), "Editar", "Eliminar"});
+            jfrGestionFuncionario.jtbTablaUsuarios.getColumn("").setCellRenderer(new ButtonRenderer());
+            jfrGestionFuncionario.jtbTablaUsuarios.getColumn("").setCellEditor(new ButtonEditor(new JCheckBox(), this));
+            jfrGestionFuncionario.jtbTablaUsuarios.getColumn("").setPreferredWidth(-50000);
 
         }
     }

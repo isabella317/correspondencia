@@ -4,36 +4,27 @@ import Vista.Autenticar.vistaLogin;
 import java.awt.Image;
 import java.awt.Toolkit;
 
-/*VISTA DE PANEL PRINCIPAL*/
+/*vista correspondiente al modulo de panel principal en la aplicación */
+
 public class vistaPanelPrincipal extends javax.swing.JFrame {
 
     Vista.Autenticar.vistaLogin jfrVistaLogin = new vistaLogin();
-    
-    public vistaPanelPrincipal(){
-        
+
+    public vistaPanelPrincipal() {
+
     }
 
     public vistaPanelPrincipal(DAO.Tablas.Usuario UsIdentificador) {
         initComponents();
-        this.setTitle("Panel Principal");
-        this.setResizable(false);
         Image ImIcon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Imagenes/logo.png"));
         this.setIconImage(ImIcon);
         this.setLocationRelativeTo(null);
-        String StIdentificador = UsIdentificador.getIdFuncionario().getNombre() + " " + UsIdentificador.getIdFuncionario().getApellido();
-        jlbIdentificador.setText(StIdentificador);
-        jLabel2.setOpaque(true);
+        jlbEncabezado.setOpaque(true);
     }
 
     public void setvistaLogin(vistaLogin jfrVistaLogin) {
         this.jfrVistaLogin = jfrVistaLogin;
     }
-
-    public vistaLogin getRegistroAutor() {
-        return jfrVistaLogin;
-    }
-
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -51,38 +42,38 @@ public class vistaPanelPrincipal extends javax.swing.JFrame {
         jlbCancelar = new javax.swing.JLabel();
         jlbGestionInformes = new javax.swing.JLabel();
         jlbInformes = new javax.swing.JLabel();
-        vistaFuncionario = new javax.swing.JLabel();
+        jlbFuncionario = new javax.swing.JLabel();
         jlbFuncionarios = new javax.swing.JLabel();
-        vistaConfiguracion = new javax.swing.JLabel();
+        jlbConfiguracion = new javax.swing.JLabel();
         jlbConfUsuario = new javax.swing.JLabel();
-        vistaUsuario = new javax.swing.JLabel();
+        jlbUsuario = new javax.swing.JLabel();
         jlbUsuarios = new javax.swing.JLabel();
         jlbIdentificador = new javax.swing.JLabel();
         jlbSalir = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        Panel1 = new javax.swing.JPanel();
+        jlbEncabezado = new javax.swing.JLabel();
+        jpnFondo = new javax.swing.JPanel();
 
         jCheckBoxMenuItem1.setSelected(true);
         jCheckBoxMenuItem1.setText("jCheckBoxMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(1400, 710));
+        setPreferredSize(new java.awt.Dimension(1400, 750));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jlbRegistrarCorrespondencia.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/carta1.png"))); // NOI18N
         getContentPane().add(jlbRegistrarCorrespondencia, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 10, -1, -1));
 
         jlbRegistrar.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jlbRegistrar.setForeground(new java.awt.Color(204, 204, 204));
-        jlbRegistrar.setText("Registrar Correspondencia");
+        jlbRegistrar.setForeground(new java.awt.Color(255, 255, 255));
+        jlbRegistrar.setText("         Correspondencia");
         getContentPane().add(jlbRegistrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, -1, -1));
 
         jlbCancelarCorrespondencia.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/carta2.png"))); // NOI18N
         getContentPane().add(jlbCancelarCorrespondencia, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 10, -1, -1));
 
         jlbCancelar.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jlbCancelar.setForeground(new java.awt.Color(204, 204, 204));
+        jlbCancelar.setForeground(new java.awt.Color(255, 255, 255));
         jlbCancelar.setText("Cancelar Correspondencia");
         getContentPane().add(jlbCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 70, -1, -1));
 
@@ -90,46 +81,46 @@ public class vistaPanelPrincipal extends javax.swing.JFrame {
         getContentPane().add(jlbGestionInformes, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 10, -1, -1));
 
         jlbInformes.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jlbInformes.setForeground(new java.awt.Color(204, 204, 204));
+        jlbInformes.setForeground(new java.awt.Color(255, 255, 255));
         jlbInformes.setText("Gestión Informes ");
         getContentPane().add(jlbInformes, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 70, -1, -1));
 
-        vistaFuncionario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/funcionarios1.png"))); // NOI18N
-        getContentPane().add(vistaFuncionario, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 10, -1, -1));
+        jlbFuncionario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/funcionarios1.png"))); // NOI18N
+        getContentPane().add(jlbFuncionario, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 10, -1, -1));
 
         jlbFuncionarios.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jlbFuncionarios.setForeground(new java.awt.Color(204, 204, 204));
+        jlbFuncionarios.setForeground(new java.awt.Color(255, 255, 255));
         jlbFuncionarios.setText("Gestión Funcionarios");
         getContentPane().add(jlbFuncionarios, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 70, -1, -1));
 
-        vistaConfiguracion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/configuracion1.png"))); // NOI18N
-        getContentPane().add(vistaConfiguracion, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 10, -1, -1));
+        jlbConfiguracion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/configuracion1.png"))); // NOI18N
+        getContentPane().add(jlbConfiguracion, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 10, -1, -1));
 
         jlbConfUsuario.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jlbConfUsuario.setForeground(new java.awt.Color(204, 204, 204));
+        jlbConfUsuario.setForeground(new java.awt.Color(255, 255, 255));
         jlbConfUsuario.setText("Configuración Usuario");
         getContentPane().add(jlbConfUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 70, -1, -1));
 
-        vistaUsuario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/usuario1.png"))); // NOI18N
-        getContentPane().add(vistaUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 10, -1, -1));
+        jlbUsuario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/usuario1.png"))); // NOI18N
+        getContentPane().add(jlbUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 10, -1, -1));
 
         jlbUsuarios.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jlbUsuarios.setForeground(new java.awt.Color(204, 204, 204));
+        jlbUsuarios.setForeground(new java.awt.Color(255, 255, 255));
         jlbUsuarios.setText("Gestión Usuarios");
         getContentPane().add(jlbUsuarios, new org.netbeans.lib.awtextra.AbsoluteConstraints(860, 70, -1, -1));
 
         jlbIdentificador.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jlbIdentificador.setForeground(new java.awt.Color(204, 204, 204));
+        jlbIdentificador.setForeground(new java.awt.Color(255, 255, 255));
         jlbIdentificador.setText("Jpanel");
         getContentPane().add(jlbIdentificador, new org.netbeans.lib.awtextra.AbsoluteConstraints(1010, 10, 320, 30));
 
         jlbSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/salir1.png"))); // NOI18N
         getContentPane().add(jlbSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(1330, 10, -1, -1));
 
-        jLabel2.setBackground(new java.awt.Color(51, 51, 51));
-        jLabel2.setForeground(new java.awt.Color(255, 204, 204));
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1400, 100));
-        getContentPane().add(Panel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 1400, 800));
+        jlbEncabezado.setBackground(new java.awt.Color(153, 0, 0));
+        jlbEncabezado.setForeground(new java.awt.Color(255, 204, 204));
+        getContentPane().add(jlbEncabezado, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1400, 110));
+        getContentPane().add(jpnFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 1400, 750));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -173,12 +164,13 @@ public class vistaPanelPrincipal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    public javax.swing.JPanel Panel1;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jlbCancelar;
     public javax.swing.JLabel jlbCancelarCorrespondencia;
     public javax.swing.JLabel jlbConfUsuario;
+    public javax.swing.JLabel jlbConfiguracion;
+    private javax.swing.JLabel jlbEncabezado;
+    public javax.swing.JLabel jlbFuncionario;
     public javax.swing.JLabel jlbFuncionarios;
     public javax.swing.JLabel jlbGestionInformes;
     public javax.swing.JLabel jlbIdentificador;
@@ -186,9 +178,8 @@ public class vistaPanelPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jlbRegistrar;
     public javax.swing.JLabel jlbRegistrarCorrespondencia;
     public javax.swing.JLabel jlbSalir;
+    public javax.swing.JLabel jlbUsuario;
     public javax.swing.JLabel jlbUsuarios;
-    public javax.swing.JLabel vistaConfiguracion;
-    public javax.swing.JLabel vistaFuncionario;
-    public javax.swing.JLabel vistaUsuario;
+    public javax.swing.JPanel jpnFondo;
     // End of variables declaration//GEN-END:variables
 }

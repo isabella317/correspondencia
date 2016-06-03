@@ -1,22 +1,21 @@
 package Controlador;
 
-import Modelo.Entidades.GeneradorClaves;
-import Modelo.Entidades.NotificarCorreo;
+import Modelo.GeneradorClaves;
+import Modelo.NotificarCorreo;
 import Vista.Autenticar.vistaLogin;
 import Vista.Autenticar.vistaRecuperarContraseña;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import static Controlador.ControladorInicioSesion.UsDaoTabla;
-import static Controlador.ControladorInicioSesion.AdAdvertencia;
-import static Controlador.ControladorInicioSesion.Conconexion;
-import static Controlador.ControladorInicioSesion.DuDaousuario;
+import static Controlador.controladorInicioSesion.UsDaoTabla;
+import static Controlador.controladorInicioSesion.AdAdvertencia;
+import static Controlador.controladorInicioSesion.Conconexion;
+import static Controlador.controladorInicioSesion.DuDaousuario;
 import DAO.Funciones.DaoUsuario;
-import Modelo.Entidades.Seguridad;
+import Modelo.Seguridad;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 
 /* CLASE ENCARAGADA DEL CONTROL DE LA VISTARECUPERARCONTRASEÑA*/
 public class controladorRecuperacionContrasena implements ActionListener, MouseListener {
@@ -101,7 +100,7 @@ public class controladorRecuperacionContrasena implements ActionListener, MouseL
     public void mouseClicked(MouseEvent e) {
         if (e.getSource() == jfrVistaContrasena.jlbAtras) {
             vistaLogin jfrVistaLogin = new vistaLogin();
-            ControladorInicioSesion ctInicioSesion = new ControladorInicioSesion(jfrVistaLogin);
+            controladorInicioSesion ctInicioSesion = new controladorInicioSesion(jfrVistaLogin);
             jfrVistaLogin.setVisible(true);
             jfrVistaLogin.setLocationRelativeTo(jfrVistaContrasena);
             jfrVistaContrasena.dispose();

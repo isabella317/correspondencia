@@ -5,7 +5,7 @@
  */
 package DAO.Funciones;
 
-import static Controlador.ControladorInicioSesion.listaPermisos;
+import static Controlador.controladorInicioSesion.listaPermisos;
 import DAO.Funciones.exceptions.IllegalOrphanException;
 import DAO.Funciones.exceptions.NonexistentEntityException;
 import DAO.Tablas.Dependencia;

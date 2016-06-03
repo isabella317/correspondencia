@@ -16,6 +16,9 @@
     <class>DAO.Tablas.Dependencia</class>
     <class>DAO.Tablas.Funcionrol</class>
     <class>DAO.Tablas.Usuario</class>
+    <class>DAO.Tablas.CEnviada</class>
+    <class>DAO.Tablas.CRecibida</class>
+    <class>DAO.Tablas.FuncionarioExterno</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/correspondencia"/>
       <property name="javax.persistence.jdbc.user" value="admin"/>

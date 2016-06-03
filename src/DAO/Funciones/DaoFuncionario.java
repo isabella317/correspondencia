@@ -158,7 +158,7 @@ public class DaoFuncionario implements Serializable {
 
     public List<Funcionario> funcionarioXApellidos() {
         EntityManager em = factory.createEntityManager();
-        List<Object> result = em.createNativeQuery("select * from funcionario order by apellido").getResultList();
+        List<Object> result = em.createNativeQuery("SELECT * FROM funcionario WHERE   (identificacion IN (select id_funcionario	FROM usuario where id_rol<>1 order by apellido))").getResultList();
         List<Funcionario> listaFuncionario = new ArrayList<Funcionario>();
 
         Iterator itr = result.iterator();
@@ -185,9 +185,38 @@ public class DaoFuncionario implements Serializable {
         return listaFuncionario;
     }
 
+    public List<Funcionario> ultimosRegistrarCorrespondencia() {
+        EntityManager em = factory.createEntityManager();
+        List<Object> result = em.createNativeQuery("select * from (select DISTINCT ON(identificacion) identificacion,nombre,apellido,telefono,email,consecutivo_e FROM funcionario JOIN c_enviada ON funcionario.identificacion=c_enviada.id_funcionario limit 10 )as foo order by consecutivo_e desc").getResultList();
+        List<Funcionario> listaFuncionario = new ArrayList<Funcionario>();
+
+        Iterator itr = result.iterator();
+        while (itr.hasNext()) {
+            Object[] obj = (Object[]) itr.next();
+            String identificacion = String.valueOf(obj[0]);
+            String nombre = String.valueOf(obj[1]);
+            String apellido = String.valueOf(obj[2]);
+            String telefono = String.valueOf(obj[3]);
+            String correo = String.valueOf(obj[4]);
+            String sede = String.valueOf(obj[5]);
+
+            Funcionario f = new Funcionario();
+            f.setIdentificacion(identificacion);
+            f.setNombre(nombre);
+            f.setApellido(apellido);
+            f.setTelefono(telefono);
+            f.setEmail(correo);
+            f.setSede(sede);
+
+            listaFuncionario.add(f);
+        }
+
+        return listaFuncionario;
+    }
+    
     public List<Funcionario> noUsuarios() {
         EntityManager em = factory.createEntityManager();
-        List<Object> result = em.createNativeQuery("SELECT * FROM funcionario WHERE  NOT(identificacion in (select id_funcionario	FROM usuario))").getResultList();
+        List<Object> result = em.createNativeQuery("SELECT * FROM funcionario WHERE SEDE=" + "'YUMBO'  " + "  and NOT(identificacion in (select id_funcionario	FROM usuario))").getResultList();
         List<Funcionario> listaFuncionario = new ArrayList<Funcionario>();
 
         Iterator itr = result.iterator();
@@ -213,9 +242,7 @@ public class DaoFuncionario implements Serializable {
 
         return listaFuncionario;
     }
-    
-    
-    
+
     public void destroy(String id) throws IllegalOrphanException, NonexistentEntityException {
         EntityManager em = null;
         try {
@@ -261,7 +288,81 @@ public class DaoFuncionario implements Serializable {
         return findFuncionarioEntities(false, maxResults, firstResult);
     }
 
-    private List<Funcionario> findFuncionarioEntities(boolean all, int maxResults, int firstResult) {
+    public List<Funcionario> getPaginacion(int noregistro, int paginacion) {
+
+        EntityManager em = factory.createEntityManager();
+        List<Object> result = em.createNativeQuery("SELECT * FROM funcionario order by apellido LIMIT '" + paginacion + "'OFFSET '" + noregistro + "'").getResultList();
+        List<Funcionario> listaFuncionario = new ArrayList<Funcionario>();
+
+        Iterator itr = result.iterator();
+        while (itr.hasNext()) {
+            Object[] obj = (Object[]) itr.next();
+            String identificacion = String.valueOf(obj[0]);
+            String nombre = String.valueOf(obj[2]);
+            String apellido = String.valueOf(obj[3]);
+            String telefono = String.valueOf(obj[5]);
+            String correo = String.valueOf(obj[6]);
+            String sede = String.valueOf(obj[8]);
+
+            Funcionario f = new Funcionario();
+            f.setIdentificacion(identificacion);
+            f.setNombre(nombre);
+            f.setApellido(apellido);
+            f.setTelefono(telefono);
+            f.setEmail(correo);
+            f.setSede(sede);
+
+            listaFuncionario.add(f);
+        }
+
+        return listaFuncionario;
+
+    }
+
+    public int getPaginacionUsuarioContar() {
+
+        EntityManager em = factory.createEntityManager();
+        Object result = em.createNativeQuery(" SELECT count(*) FROM funcionario WHERE   (identificacion IN (select id_funcionario FROM usuario where id_rol<>1))").getSingleResult();
+        int valor = 0;
+
+        valor = Integer.parseInt(result.toString());
+
+        return valor;
+
+    }
+
+    public List<Funcionario> getPaginacionUsuario(int noregistro, int paginacion) {
+
+        EntityManager em = factory.createEntityManager();
+        List<Object> result = em.createNativeQuery("SELECT * FROM funcionario WHERE   (identificacion IN (select id_funcionario FROM usuario where id_rol<>1 ))order by apellido  LIMIT '" + paginacion + "'OFFSET '" + noregistro + "'").getResultList();
+        List<Funcionario> listaFuncionario = new ArrayList<Funcionario>();
+
+        Iterator itr = result.iterator();
+        while (itr.hasNext()) {
+            Object[] obj = (Object[]) itr.next();
+            String identificacion = String.valueOf(obj[0]);
+            String nombre = String.valueOf(obj[2]);
+            String apellido = String.valueOf(obj[3]);
+            String telefono = String.valueOf(obj[5]);
+            String correo = String.valueOf(obj[6]);
+            String sede = String.valueOf(obj[8]);
+
+            Funcionario f = new Funcionario();
+            f.setIdentificacion(identificacion);
+            f.setNombre(nombre);
+            f.setApellido(apellido);
+            f.setTelefono(telefono);
+            f.setEmail(correo);
+            f.setSede(sede);
+
+            listaFuncionario.add(f);
+        }
+
+        return listaFuncionario;
+
+    }
+
+    public List<Funcionario> findFuncionarioEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();

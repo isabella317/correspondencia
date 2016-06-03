@@ -1,43 +1,44 @@
 package Controlador;
 
-import static Controlador.ControladorInicioSesion.UsValido;
+import static Controlador.controladorInicioSesion.UsValido;
 import Vista.Autenticar.vistaLogin;
-import Controlador.GestionCorrespondencia.controladorCancelarCorrespondencia;
+import Controlador.GestionCorrespondencia.controladorAnularCorrespondencia;
 import Controlador.GestionCorrespondencia.controladorRegistrarCorrespondencia;
 import Controlador.GestionInformes.controladorConsecutivo;
 import Controlador.GestionUsuario.controladorFuncionarios;
-import Vista.GestionCorrespondencia.vistaCancelarCorrespondencia;
-import Vista.GestionCorrespondencia.vistaRegistrarCorrespondencia;
 import Vista.GestionInformes.vistaConsecutivos;
 import Vista.vistaPanelPrincipal;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.sql.SQLException;
 import Controlador.GestionUsuario.controladorUsuarios;
 import Controlador.GestionUsuario.controladorConfUsuario;
+import Vista.Correspondencia.panelAnularCorrespondencia;
+import Vista.Correspondencia.panelRegistrarCorrespondencia;
 import static correspondenciafundacion.CorrespondenciaFundacion.panel;
 import vistaGestionUsuario.panelConfiguracion;
 import vistaGestionUsuario.panelFuncionario;
 import vistaGestionUsuario.panelUsuario;
 
-/*CONTROLADOR DE PANEL PRINCIPAL */
+/*Controlador de panel principal : Encargado de realizar acciones dependiendo del medio de donde provengan ::Boton,Jlabel,etc...  */
 public class controladorPanelPrincipal implements MouseListener {
 
     vistaPanelPrincipal jfrVistaPanelPrincipal = new vistaPanelPrincipal(UsValido);
 
     public controladorPanelPrincipal(vistaPanelPrincipal jfrVistaPanelPrincipal) {
         this.jfrVistaPanelPrincipal = jfrVistaPanelPrincipal;
-        panel.validarPermiso(2, jfrVistaPanelPrincipal.vistaFuncionario, jfrVistaPanelPrincipal.jlbFuncionarios);
-        panel.validarPermiso(1, jfrVistaPanelPrincipal.vistaUsuario, jfrVistaPanelPrincipal.jlbUsuarios);
-        panel.validarPermiso(3, jfrVistaPanelPrincipal.vistaConfiguracion, jfrVistaPanelPrincipal.jlbConfUsuario);
+
+        jfrVistaPanelPrincipal.jlbIdentificador.setText(UsValido.getIdFuncionario().getNombre() + " " + UsValido.getIdFuncionario().getApellido());
+        panel.validarPermiso(2, jfrVistaPanelPrincipal.jlbFuncionario, jfrVistaPanelPrincipal.jlbFuncionarios);
+        panel.validarPermiso(1, jfrVistaPanelPrincipal.jlbUsuario, jfrVistaPanelPrincipal.jlbUsuarios);
+        panel.validarPermiso(3, jfrVistaPanelPrincipal.jlbConfiguracion, jfrVistaPanelPrincipal.jlbConfUsuario);
 
         jfrVistaPanelPrincipal.jlbRegistrarCorrespondencia.addMouseListener(this);
         jfrVistaPanelPrincipal.jlbCancelarCorrespondencia.addMouseListener(this);
         jfrVistaPanelPrincipal.jlbGestionInformes.addMouseListener(this);
-        jfrVistaPanelPrincipal.vistaUsuario.addMouseListener(this);
+        jfrVistaPanelPrincipal.jlbUsuario.addMouseListener(this);
         jfrVistaPanelPrincipal.jlbSalir.addMouseListener(this);
-        jfrVistaPanelPrincipal.vistaFuncionario.addMouseListener(this);
-        jfrVistaPanelPrincipal.vistaConfiguracion.addMouseListener(this);
+        jfrVistaPanelPrincipal.jlbFuncionario.addMouseListener(this);
+        jfrVistaPanelPrincipal.jlbConfiguracion.addMouseListener(this);
 
     }
 
@@ -45,35 +46,32 @@ public class controladorPanelPrincipal implements MouseListener {
     public void mouseClicked(MouseEvent e) {
 
         if (e.getSource() == jfrVistaPanelPrincipal.jlbRegistrarCorrespondencia) {
-            vistaRegistrarCorrespondencia jfrVistaRegistrar = new vistaRegistrarCorrespondencia(UsValido);
-            try {
-                controladorRegistrarCorrespondencia ctCorrespondencia = new controladorRegistrarCorrespondencia(jfrVistaRegistrar);
-            } catch (SQLException ex) {
-            }
-            jfrVistaRegistrar.setvistaP(jfrVistaPanelPrincipal);
-            jfrVistaRegistrar.setVisible(true);
-            jfrVistaRegistrar.setLocationRelativeTo(jfrVistaPanelPrincipal);
-            jfrVistaPanelPrincipal.dispose();
+            panelRegistrarCorrespondencia jfrGestionFuncionario = new panelRegistrarCorrespondencia();
+            controladorRegistrarCorrespondencia ctFuncionario = new controladorRegistrarCorrespondencia(jfrGestionFuncionario,jfrVistaPanelPrincipal);
+            jfrVistaPanelPrincipal.jpnFondo.removeAll();
+            jfrVistaPanelPrincipal.jpnFondo.add(jfrGestionFuncionario);
+            jfrVistaPanelPrincipal.jpnFondo.revalidate();
+            jfrVistaPanelPrincipal.jpnFondo.repaint();
 
         } else if (e.getSource() == jfrVistaPanelPrincipal.jlbCancelarCorrespondencia) {
-            vistaCancelarCorrespondencia jfrVistaCancelar = new vistaCancelarCorrespondencia(UsValido);
-            controladorCancelarCorrespondencia ctCorrespondencia = new controladorCancelarCorrespondencia(jfrVistaCancelar);
-            jfrVistaCancelar.setvistaR(jfrVistaPanelPrincipal);
-            jfrVistaCancelar.setVisible(true);
-            jfrVistaCancelar.setLocationRelativeTo(jfrVistaPanelPrincipal);
-            jfrVistaPanelPrincipal.dispose();
+            panelAnularCorrespondencia jfrGestionFuncionario = new panelAnularCorrespondencia ();
+            controladorAnularCorrespondencia ctFuncionario = new controladorAnularCorrespondencia(jfrGestionFuncionario);
+            jfrVistaPanelPrincipal.jpnFondo.removeAll();
+            jfrVistaPanelPrincipal.jpnFondo.add(jfrGestionFuncionario);
+            jfrVistaPanelPrincipal.jpnFondo.revalidate();
+            jfrVistaPanelPrincipal.jpnFondo.repaint();
 
-        } else if (e.getSource() == jfrVistaPanelPrincipal.vistaUsuario) {
+        } else if (e.getSource() == jfrVistaPanelPrincipal.jlbUsuario) {
             panelUsuario jfrGestionUsuario = new panelUsuario();
             controladorUsuarios ctUsuario = new controladorUsuarios(jfrGestionUsuario);
-            jfrVistaPanelPrincipal.Panel1.removeAll();
-            jfrVistaPanelPrincipal.Panel1.add(jfrGestionUsuario);
-            jfrVistaPanelPrincipal.Panel1.revalidate();
-            jfrVistaPanelPrincipal.Panel1.repaint();
+            jfrVistaPanelPrincipal.jpnFondo.removeAll();
+            jfrVistaPanelPrincipal.jpnFondo.add(jfrGestionUsuario);
+            jfrVistaPanelPrincipal.jpnFondo.revalidate();
+            jfrVistaPanelPrincipal.jpnFondo.repaint();
 
         } else if (e.getSource() == jfrVistaPanelPrincipal.jlbSalir) {
             vistaLogin jfrVistaLogin = new vistaLogin();
-            ControladorInicioSesion ctInicioSesion = new ControladorInicioSesion(jfrVistaLogin);
+            controladorInicioSesion ctInicioSesion = new controladorInicioSesion(jfrVistaLogin);
             jfrVistaLogin.setVisible(true);
             jfrVistaLogin.setLocationRelativeTo(null);
             jfrVistaPanelPrincipal.dispose();
@@ -87,23 +85,23 @@ public class controladorPanelPrincipal implements MouseListener {
             jfrConsecutivo.setLocationRelativeTo(jfrVistaPanelPrincipal);
             jfrVistaPanelPrincipal.dispose();
 
-        } else if (e.getSource() == jfrVistaPanelPrincipal.vistaFuncionario) {
+        } else if (e.getSource() == jfrVistaPanelPrincipal.jlbFuncionario) {
 
             panelFuncionario jfrGestionFuncionario = new panelFuncionario();
             controladorFuncionarios ctFuncionario = new controladorFuncionarios(jfrGestionFuncionario);
-            jfrVistaPanelPrincipal.Panel1.removeAll();
-            jfrVistaPanelPrincipal.Panel1.add(jfrGestionFuncionario);
-            jfrVistaPanelPrincipal.Panel1.revalidate();
-            jfrVistaPanelPrincipal.Panel1.repaint();
+            jfrVistaPanelPrincipal.jpnFondo.removeAll();
+            jfrVistaPanelPrincipal.jpnFondo.add(jfrGestionFuncionario);
+            jfrVistaPanelPrincipal.jpnFondo.revalidate();
+            jfrVistaPanelPrincipal.jpnFondo.repaint();
 
-        } else if (e.getSource() == jfrVistaPanelPrincipal.vistaConfiguracion) {
+        } else if (e.getSource() == jfrVistaPanelPrincipal.jlbConfiguracion) {
 
             panelConfiguracion jfrConfUsuario = new panelConfiguracion();
             controladorConfUsuario ctConfUsuario = new controladorConfUsuario(jfrConfUsuario);
-            jfrVistaPanelPrincipal.Panel1.removeAll();
-            jfrVistaPanelPrincipal.Panel1.add(jfrConfUsuario);
-            jfrVistaPanelPrincipal.Panel1.revalidate();
-            jfrVistaPanelPrincipal.Panel1.repaint();
+            jfrVistaPanelPrincipal.jpnFondo.removeAll();
+            jfrVistaPanelPrincipal.jpnFondo.add(jfrConfUsuario);
+            jfrVistaPanelPrincipal.jpnFondo.revalidate();
+            jfrVistaPanelPrincipal.jpnFondo.repaint();
 
         }
     }

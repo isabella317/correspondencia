@@ -1,239 +1,167 @@
 package Controlador.GestionCorrespondencia;
 
-//import static Controlador.ControladorInicioSesion.conexion;
-import static Controlador.ControladorInicioSesion.UsValido;
-import Controlador.controladorPanelPrincipal;
-//import Modelo.ConexionBase;
-//import static Modelo.ConexionBase.cargos;
-//import static Modelo.ConexionBase.encargados;
-import Modelo.Entidades.ManejoArchivo;
-import Vista.GestionCorrespondencia.vistaRegistrarCorrespondencia;
+import static Controlador.GestionCorrespondencia.controladorAnularCorrespondencia.DeStringADate;
+import static Controlador.controladorInicioSesion.AdAdvertencia;
+import static Controlador.controladorInicioSesion.Conconexion;
+import static Controlador.controladorInicioSesion.UsValido;
+import DAO.Funciones.DaoCEnviada;
+import DAO.Funciones.DaoCRecibida;
+import DAO.Tablas.CEnviada;
+import DAO.Tablas.CRecibida;
+import Vista.Correspondencia.ExternoModal;
+import Vista.Correspondencia.panelRegistrarCorrespondencia;
+import Vista.Correspondencia.InternoModal;
 import Vista.vistaPanelPrincipal;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
-import java.io.FileInputStream;
-import java.sql.SQLException;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import java.text.SimpleDateFormat;
 import java.util.*;
-import javax.swing.SwingConstants;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
 
-public class controladorRegistrarCorrespondencia implements ActionListener, MouseListener, ItemListener {
+public class controladorRegistrarCorrespondencia implements ActionListener, ItemListener {
 
-    vistaRegistrarCorrespondencia vistaregistrar = new vistaRegistrarCorrespondencia(UsValido);
-    vistaPanelPrincipal panelprincipal;
-    
-    
-    private String ruta;
-    public static Calendar fecha = new GregorianCalendar();
-    public static Date d = fecha.getTime();
-    ManejoArchivo manejo = new ManejoArchivo();
-    public static int anio = fecha.get(Calendar.YEAR);
-    public static int mes = (fecha.get(Calendar.MONTH)) + 1;
-    public static int dia = fecha.get(Calendar.DAY_OF_MONTH);
-    
-    /*INICIALIZACION VARIABLES*/
-    String estado = "INTERNO";
-    File documento;
-    String f = "";
-    String origen = "";
-    int depen;
-    String remitente = "";
-    String destino = "";
-    String tdestinatario = "";
-    String asun = "";
-    String obs = "";
-    String torigen = "";
-    String path = "";
-    Boolean confidencial = false;
-    FileInputStream fileInputStream = null;
+    protected panelRegistrarCorrespondencia vistaregistrar = new panelRegistrarCorrespondencia();
+    private Date fechaActual = new Date();
+    private vistaPanelPrincipal v;
+    private controladorExterno controladordestinatario;
+    private controladorInterno controladorremitente;
+    private File documento = null;
+    private DAO.Funciones.DaoCEnviada DuDaEnviado;
+    private DAO.Funciones.DaoCRecibida DuDaRecibida;
+    protected SimpleDateFormat formateador = new SimpleDateFormat("dd-MM-yyyy");
 
-    public controladorRegistrarCorrespondencia(vistaRegistrarCorrespondencia vistaregistrar) throws SQLException {
+    public controladorRegistrarCorrespondencia(panelRegistrarCorrespondencia vistaregistrar, vistaPanelPrincipal v) {
 
         this.vistaregistrar = vistaregistrar;
-        agregarItemsDependencia();
-//        vistaregistrar.encargado.setText(encargados.get(0));
-        vistaregistrar.jtxtRemitente.setEditable(false);
-        vistaregistrar.jtxtFecha.setText(anio + "-" + (mes) + "-" + dia);
-        vistaregistrar.jtxtFecha.setHorizontalAlignment(SwingConstants.CENTER);
-        vistaregistrar.jcomboOrigen.addItemListener(this);
-        vistaregistrar.jcomboDependencia.addItemListener(this);
-        vistaregistrar.jtxtRemitente.addActionListener(this);
-        vistaregistrar.enviar.addActionListener(this);
+        this.v = v;
+        vistaregistrar.btnDestinatario.addActionListener(this);
+        vistaregistrar.btnRemitente.addActionListener(this);
         vistaregistrar.btnDocumento.addActionListener(this);
-        vistaregistrar.jcomboDestino.addItemListener(this);
-        vistaregistrar.jcomboDestinatario.addItemListener(this);
-        vistaregistrar.jcomboTipoOrigen.addItemListener(this);
-        vistaregistrar.limpiar.addActionListener(this);
-        vistaregistrar.atras.addMouseListener(this);
-
-        ruta = "";
-
-    }
-
-    void agregarItemsDependencia() throws SQLException {
-        // conexion.anadirDependencia();
-        // vistaregistrar.dependencia.setModel(new DefaultComboBoxModel(cargos.toArray()));
-
-    }
-
-    void limpiar() {
-        vistaregistrar.jcomboOrigen.setSelectedIndex(0);
-        vistaregistrar.jcomboDestino.setSelectedIndex(0);
-        vistaregistrar.jcomboDestinatario.setSelectedIndex(0);
-        vistaregistrar.jeditAsunto.setText("");
-        vistaregistrar.jeditObservaciones.setText("");
-        vistaregistrar.jcomboTipoOrigen.setSelectedIndex(0);
-        vistaregistrar.jcheckConfidencial.setSelected(false);
-        vistaregistrar.jtxtRuta.setText("");
+        vistaregistrar.btnRegistrar.addActionListener(this);
+        vistaregistrar.jtxFecha.setText(formateador.format(fechaActual));
+        vistaregistrar.btnDestinatario.setEnabled(false);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        if (e.getSource() == vistaregistrar.limpiar) {
+        if (e.getSource() == vistaregistrar.btnRemitente) {
 
-            limpiar();
+            if (vistaregistrar.cmbOrigen.getSelectedItem().toString().equals("INTERNO")) {
+                vistaregistrar.jtxtDestino.setText("EXTERNO");
+                asignarInterno("REMITENTE");
+            } else {
+                vistaregistrar.jtxtDestino.setText("INTERNO");
+                asignarExterno("REMITENTE");
+
+            }
 
         } else if (e.getSource() == vistaregistrar.btnDocumento) {
+
+            String ruta = "";
+
             FileNameExtensionFilter filtro = new FileNameExtensionFilter("PDF", "pdf");
             JFileChooser chooser = new JFileChooser();
+            chooser.setPreferredSize(new Dimension(600, 400));
             chooser.setFileFilter(filtro);
+            chooser.setAcceptAllFileFilterUsed(false);
+
             chooser.setDialogTitle("Archivo PDF");
 
             if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-
-                String archivo = chooser.getSelectedFile().getAbsolutePath();
-                path = chooser.getSelectedFile().toString();
+                ruta = chooser.getSelectedFile().toString();
+                vistaregistrar.jtxtRutaDocumento.setText(ruta);
                 documento = chooser.getSelectedFile();
-                String PATH = documento.getAbsolutePath();
-
+                System.out.println(documento);
             }
-        } else if (e.getSource() == vistaregistrar.enviar) {
 
-            if (vistaregistrar.jeditAsunto.getText().equals("") || vistaregistrar.jtxtRemitente.getText().equals("")) {
-                JOptionPane.showMessageDialog(null, "Debe ingresar el campo asunto y remitente");
-            } else if (vistaregistrar.jcomboOrigen.getSelectedItem().toString() == "INTERNO") {
-               
-                    //correspondencia entrante
+        } else if (e.getSource() == vistaregistrar.btnDestinatario) {
 
-                    f = anio + "-" + mes + "-" + dia;
-                    origen = "INTERNO";
-                    depen = vistaregistrar.jcomboDependencia.getSelectedIndex() + 1;
-                    remitente = vistaregistrar.jtxtRemitente.getText().toUpperCase();
-                    destino = vistaregistrar.jcomboDestino.getSelectedItem().toString();
-                    tdestinatario = vistaregistrar.jcomboDestinatario.getSelectedItem().toString();
-                    asun = vistaregistrar.jeditAsunto.getText();
-                    obs = vistaregistrar.jeditObservaciones.getText();
-                    torigen = vistaregistrar.jcomboTipoOrigen.getSelectedItem().toString();
-                    confidencial = vistaregistrar.jcheckConfidencial.isSelected();
-
-//                    CorrespondenciaEntrante c1 = new CorrespondenciaEntrante(f, origen, remitente, destino, tdestinatario, asun, obs, torigen, documento, confidencial, usuarioautenticado.getNombre1() + " " + usuarioautenticado.getApellido1());
-//                    conexion.ingresarCorrespondencia(origen, c1, depen, confidencial, remitente, f);
-                    JOptionPane.showMessageDialog(null, "Guardado exitoso!", "Guardado", JOptionPane.INFORMATION_MESSAGE);
-                    limpiar();
-                    if (documento != null) {
-                        File folder = new File("C:\\Users\\Public\\Downloads\\CORRESPONDENCIA");
-                        folder.mkdirs();
-//                        String doc = conexion.ConsultaDocumento();
-//                      System.out.println(Integer.parseInt(doc));
-                       
-                      //     manejo.copiarArchivo(path, "C:\\Users\\Public\\Downloads\\CORRESPONDENCIA\\" + doc + "(" + f + ").pdf");
-                        
-                    }
-
-                    documento = null;
-                
-            } else if (vistaregistrar.jtxtRemitente.equals("")) {
-                JOptionPane.showMessageDialog(panelprincipal, "Debe ingresar nombre del encargado");
+            if (vistaregistrar.jtxtDestino.getText().equals("INTERNO")) {
+                asignarInterno("DESTINATARIO");
             } else {
-                //correspondencia saliente
-                f = anio + "-" + mes + "-" + dia;
-                origen = "EXTERNO";
-                remitente = vistaregistrar.jtxtRemitente.getText().toUpperCase();
-                destino = vistaregistrar.jcomboDestino.getSelectedItem().toString();
-                tdestinatario = vistaregistrar.jcomboDestinatario.getSelectedItem().toString();
-                asun = vistaregistrar.jeditAsunto.getText();
-                obs = vistaregistrar.jeditObservaciones.getText();
-                torigen = vistaregistrar.jcomboTipoOrigen.getSelectedItem().toString();
-                confidencial = vistaregistrar.jcheckConfidencial.isSelected();
-//                CorrespondenciaEntrante c1 = new CorrespondenciaEntrante(f, origen, remitente, destino, tdestinatario, asun, obs, torigen, documento, confidencial, usuarioautenticado.getNombre1() + " " + usuarioautenticado.getApellido1());
-//                conexion.ingresarCorrespondencia(origen, c1, depen, confidencial, remitente, f);
-                JOptionPane.showMessageDialog(null, "Guardado exitoso!", "Guardado", JOptionPane.INFORMATION_MESSAGE);
+                asignarExterno("DESTINATARIO");
+            }
 
-                if (documento != null) {
-                    
-                        File folder = new File("C:\\Users\\Public\\Downloads\\CORRESPONDENCIA");
-                        folder.mkdirs();
-//                        String doc = conexion.ConsultaDocumento();
-                       // System.out.println(Integer.parseInt(doc));
-                       
-                        //    manejo.copiarArchivo(path, "C:\\Users\\Public\\Downloads\\CORRESPONDENCIA\\" + doc + "(" + f + ").pdf");
-                       
-                    
-                }
+        } else if (e.getSource() == vistaregistrar.btnRegistrar) {
+
+            vistaregistrar.jlbMsjAdvertencia.setVisible(false);
+            if (vistaregistrar.jtxAsunto.getText().equals("") || vistaregistrar.jeditObservaciones.getText().equals("") || vistaregistrar.jtxtRutaDocumento.getText().equals("") || vistaregistrar.jtxtRutaRemitente.getText().equals("") || vistaregistrar.jtxtRutaDestinatario.getText().equals("") || documento == null) {
+                vistaregistrar.jlbMsjAdvertencia.setText(AdAdvertencia.getDatosInc());
+                vistaregistrar.jlbMsjAdvertencia.setVisible(true);
+
+            } else if (vistaregistrar.cmbOrigen.getSelectedItem().toString().equals("INTERNO")) {
+
+                //enviada
+                DuDaEnviado = new DaoCEnviada(Conconexion.getConexion());
+                int ultimoregistro = DuDaEnviado.getUltimoRegistro();
+                Date fecha =DeStringADate(vistaregistrar.jtxFecha.getText());
+                DuDaEnviado.create(new CEnviada((ultimoregistro + 1),fecha , vistaregistrar.jtxAsunto.getText().toUpperCase(), vistaregistrar.jeditObservaciones.getText(), vistaregistrar.cmbTipoOrigen.getSelectedItem().toString(), controladorremitente.getFuncionario(), controladordestinatario.getFuncionario(),               UsValido.getIdFuncionario().getNombre()+" "+UsValido.getIdFuncionario().getApellido()+"-"+UsValido.getIdFuncionario().getIdentificacion(),true));
+                File directorio = new File("C:\\Correspondencia");
+                directorio.mkdir();
+                directorio = new File("C:\\Correspondencia\\Enviada");
+                directorio.mkdir();
+                File nvoArchivo = new File(vistaregistrar.jtxFecha.getText() + "-" + (ultimoregistro + 1) + ".pdf");
+                documento.renameTo(new File("C:\\Correspondencia\\Enviada\\" + nvoArchivo.getName()));
+                limpiar();
+                vistaregistrar.jlbMsjAdvertencia.setText("Correspondencia registrada satisfactoriamente.");
+                vistaregistrar.jlbMsjAdvertencia.setVisible(true);
+
+            } else {
+
+                //recibida
+                DuDaRecibida = new DaoCRecibida(Conconexion.getConexion());
+                int ultimoregistro = DuDaRecibida.getUltimoRegistro();
+                DuDaRecibida.create(new CRecibida((ultimoregistro + 1), vistaregistrar.jtxFecha.getText(), vistaregistrar.jtxAsunto.getText().toUpperCase(), vistaregistrar.jeditObservaciones.getText(), vistaregistrar.cmbTipoOrigen.getSelectedItem().toString(), controladorremitente.getFuncionario(), controladordestinatario.getFuncionario()));
+                File directorio = new File("C:\\Correspondencia");
+                directorio.mkdir();
+                directorio = new File("C:\\Correspondencia\\Recibida");
+                directorio.mkdir();
+
+                File nvoArchivo = new File(vistaregistrar.jtxFecha.getText() + "-" + (ultimoregistro + 1) + ".pdf");
+                documento.renameTo(new File("C:\\Correspondencia\\Recibida\\" + nvoArchivo.getName()));
+                limpiar();
+                vistaregistrar.jlbMsjAdvertencia.setText("Correspondencia registrada satisfactoriamente.");
+                vistaregistrar.jlbMsjAdvertencia.setVisible(true);
+
             }
         }
 
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        if (e.getSource() == vistaregistrar.atras) {
-            panelprincipal = new vistaPanelPrincipal(UsValido);
-            controladorPanelPrincipal controladorP = new controladorPanelPrincipal(panelprincipal);
-            panelprincipal.setVisible(true);
-            panelprincipal.setLocationRelativeTo(vistaregistrar);
-            vistaregistrar.dispose();
-
-        }
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e
-    ) {
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e
-    ) {
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e
-    ) {
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e
-    ) {
     }
 
     @Override
     public void itemStateChanged(ItemEvent e) {
+    }
 
-        if ((e.getStateChange() == ItemEvent.SELECTED)) {
+    public void limpiar() {
+        vistaregistrar.jlbMsjAdvertencia.setVisible(false);
+        vistaregistrar.jtxAsunto.setText("");
+        vistaregistrar.jeditObservaciones.setText("");
+        vistaregistrar.jtxtRutaDestinatario.setText("");
+        vistaregistrar.jtxtRutaDocumento.setText("");
+        vistaregistrar.jtxtRutaRemitente.setText("");
+        documento = null;
+    }
 
-        } else if (vistaregistrar.jcomboOrigen.getSelectedItem().toString() == "INTERNO") {
-            vistaregistrar.jcomboDependencia.enable(true);
-            vistaregistrar.jtxtRemitente.setEditable(false);
-            int posicion = vistaregistrar.jcomboDependencia.getSelectedIndex();
-         //   vistaregistrar.encargado.setText(encargados.get(posicion));
+    public void asignarInterno(String source) {
 
-        } else if (vistaregistrar.jcomboOrigen.getSelectedItem().toString() == "EXTERNO") {
-            vistaregistrar.jcomboDependencia.enable(false);
-            vistaregistrar.jtxtRemitente.setText("");
-            vistaregistrar.jtxtRemitente.setEditable(true);
+        InternoModal vistaremitente = new InternoModal(v, true);
+        controladorremitente = new controladorInterno(vistaremitente, this, source);
+        vistaremitente.setLocationRelativeTo(null);
+        vistaremitente.setVisible(true);
+    }
 
-        }
-
+    public void asignarExterno(String source) {
+        ExternoModal vistaremitente = new ExternoModal(v, true);
+        controladordestinatario = new controladorExterno(vistaremitente, this, source);
+        vistaremitente.setLocationRelativeTo(null);
+        vistaremitente.setVisible(true);
     }
 
 }

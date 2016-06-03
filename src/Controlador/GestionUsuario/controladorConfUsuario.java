@@ -1,11 +1,12 @@
 package Controlador.GestionUsuario;
 
-import static Controlador.ControladorInicioSesion.AdAdvertencia;
-import static Controlador.ControladorInicioSesion.Conconexion;
-import static Controlador.ControladorInicioSesion.DuDaofuncionario;
-import static Controlador.ControladorInicioSesion.DuDaousuario;
-import static Controlador.ControladorInicioSesion.UsValido;
-import Modelo.Entidades.*;
+import Modelo.Seguridad;
+import Modelo.validarEmail;
+import static Controlador.controladorInicioSesion.AdAdvertencia;
+import static Controlador.controladorInicioSesion.Conconexion;
+import static Controlador.controladorInicioSesion.DuDaofuncionario;
+import static Controlador.controladorInicioSesion.DuDaousuario;
+import static Controlador.controladorInicioSesion.UsValido;
 import Vista.vistaPanelPrincipal;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,7 +21,7 @@ import DAO.Tablas.Funcionario;
 import javax.swing.JOptionPane;
 import vistaGestionUsuario.panelConfiguracion;
 
-/*CLASE ENCARGADA DE VISTA CONTROL USUARIOS */
+/*Controlador de configuración de usuarios : Encargado de realizar acciones dependiendo del medio de donde provengan ::Boton,Jlabel,etc...  */
 public final class controladorConfUsuario implements MouseListener, ActionListener, KeyListener {
 
     private panelConfiguracion jfrGestionUsuario = new panelConfiguracion();
@@ -46,7 +47,7 @@ public final class controladorConfUsuario implements MouseListener, ActionListen
 
     public controladorConfUsuario(panelConfiguracion jfrGestionUsuario) {
         this.jfrGestionUsuario = jfrGestionUsuario;
-        
+
         jfrGestionUsuario.btnActualizar.addActionListener(this);
         jfrGestionUsuario.btnLimpiar.addActionListener(this);
         jfrGestionUsuario.jlbMsjAdvertencia.setVisible(false);
@@ -61,8 +62,6 @@ public final class controladorConfUsuario implements MouseListener, ActionListen
     @Override
     public void mouseClicked(MouseEvent e) {
 
-       
-
     }
 
     public void limpiarCampos() {
@@ -71,7 +70,7 @@ public final class controladorConfUsuario implements MouseListener, ActionListen
         jfrGestionUsuario.jtxtCorreo.setText("");
         jfrGestionUsuario.jpasContrasena.setText("");
         jfrGestionUsuario.jpasContrasena2.setText("");
-
+        jfrGestionUsuario.jlbMsjAdvertencia.setVisible(false);
     }
 
     @Override
@@ -140,6 +139,7 @@ public final class controladorConfUsuario implements MouseListener, ActionListen
                                 DuDaousuario.edit(UsValido);
                                 DaoFuncionario DuDaofuncionario = new DaoFuncionario(Conconexion.getConexion());
                                 DuDaofuncionario.edit(funcionario);
+                                limpiarCampos();
                                 jfrGestionUsuario.jlbMsjAdvertencia.setText(AdAdvertencia.getConfUsuario());
                                 jfrGestionUsuario.jlbMsjAdvertencia.setVisible(true);
                             } else {

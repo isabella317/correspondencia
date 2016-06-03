@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="correspondenciafundacion.jnlp">
+  <information>
+    <title>correspondenciafundacion</title>
+    <vendor>ISABELLA</vendor>
+    <description>null</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="correspondenciafundacion.jar" size="1204693" download="eager" />
+    <jar href="lib\AbsoluteLayout.jar" size="2903" download="eager" />
+    <jar href="lib\DateChooser.jar" size="514979" download="eager" />
+    <jar href="lib\beansbinding-1.2.1.jar" size="631289" download="eager" />
+    <jar href="lib\eclipselink.jar" size="8478776" download="eager" />
+    <jar href="lib\edisoncorSX.jar" size="4075331" download="eager" />
+    <jar href="lib\hibernate-jpa-2.1-api-1.0.0.Final.jar" size="115983" download="eager" />
+    <jar href="lib\javax.persistence_2.1.0.v201304241213.jar" size="164637" download="eager" />
+    <jar href="lib\jcMousePanel.jar" size="24507" download="eager" />
+    <jar href="lib\mail.jar" size="507849" download="eager" />
+    <jar href="lib\org.eclipse.persistence.jpa.jpql_2.5.2.v20140319-9ad6abd.jar" size="1366247" download="eager" />
+    <jar href="lib\postgresql-9.2-1002.jdbc4.jar" size="576248" download="eager" />
+    <jar href="lib\swing-layout-1.0.4.jar" size="117420" download="eager" />
+    <jar href="lib\swingx-core-1.6.2.jar" size="1447793" download="eager" />
+  </resources>
+  <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="correspondenciafundacion" >
+    <param name="requiredFXVersion" value="8.0+"/>
+  </applet-desc>
+  <jfx:javafx-desc  width="800" height="600" main-class="correspondenciafundacion.CorrespondenciaFundacion"  name="correspondenciafundacion" />
+  <update check="always"/>
+</jnlp>
